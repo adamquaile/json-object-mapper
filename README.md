@@ -2,11 +2,11 @@
 
 Small library to read JSON files from a directory and turn them into PHP objects. Designed for simple content authoring by developers.
 
-* Not intended as any kind of DBMS, or application writable persistence layer *
+** Not intended as any kind of DBMS, or application writable persistence layer **
 
 ## Installation
 
-    `composer require adamquaile/json-object-mapper`
+    composer require adamquaile/json-object-mapper
 
 ## Usage
 
