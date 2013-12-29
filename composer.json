@@ -1,0 +1,21 @@
+{
+    "name": "adamquaile/json-object-mapper",
+    "description": "Maps JSON files to PHP objects, intended for simple model separation and manual content authoring",
+    "authors": [
+        {
+            "name": "Adam Quaile",
+            "email": "adamquaile@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "AdamQuaile\\JsonObjectMapper": ["src/", "tests/"]
+        }
+    },
+    "require": {
+        "symfony/finder": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
