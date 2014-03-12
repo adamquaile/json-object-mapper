@@ -13,7 +13,8 @@
         }
     },
     "require": {
-        "symfony/finder": "*"
+        "symfony/finder": "*",
+        "symfony/property-access": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

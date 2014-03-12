@@ -5,20 +5,18 @@ namespace AdamQuaile\JsonObjectMapper;
 class Entity
 {
     private $id;
-    private $data;
 
-    public function __construct($id, $data)
+    public function __construct($id)
     {
         $this->id = $id;
-        $this->data = $data;
     }
 
     /**
-     * @return mixed
+     * @param mixed $id
      */
-    public function getData()
+    public function setId($id)
     {
-        return $this->data;
+        $this->id = $id;
     }
 
     /**
@@ -28,7 +26,6 @@ class Entity
     {
         return $this->id;
     }
-
 
 
 

@@ -3,14 +3,23 @@
 namespace AdamQuaile\JsonObjectMapper;
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class EntityManager
 {
     private $location;
 
+
+    /**
+     * @var \Symfony\Component\PropertyAccess\PropertyAccessor
+     */
+    private $accessor;
+
     public function __construct($location)
     {
         $this->location = $location;
+        $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
     public function find($id)
@@ -28,19 +37,46 @@ class EntityManager
         foreach ($finder as $file) {
             $realPath = $file->getRealPath();
             $id = str_replace($this->location, '', $this->location);
-            $entities[] = self::fromJson(file_get_contents($realPath));
+            $entities[] = $this->fromJsonWithId($id, file_get_contents($realPath));
         }
 
         return $entities;
     }
 
-    public static function fromJsonWithId($id, $jsonString)
+    public function fromJsonWithId($id, $jsonString)
     {
-        return new Entity($id, json_decode($jsonString, true));
+        $data = json_decode($jsonString, true);
+        $data['id'] = $id;
+
+
+        $metadata = $this->getMetadataForEntity($id);
+        $classToHydrate = $metadata['class'];
+
+        return $this->hydrateObject($classToHydrate, $data);
+
     }
 
-    public function __call($key, $args)
+    private function getMetadataForEntity($id)
     {
-        return $this->data[$key];
+        return ['class' => '\AdamQuaile\JsonObjectMapper\Entity'];
     }
+
+    public function hydrateObject($className, $data)
+    {
+        $reflectionClass = new \ReflectionClass($className);
+        $object = $reflectionClass->newInstanceWithoutConstructor();
+
+        foreach ($data as $key => $value) {
+            try {
+                $this->accessor->setValue($object, $key, $value);
+            } catch (NoSuchPropertyException $e) {
+                $object->$key = $value;
+            }
+        }
+
+        return $object;
+
+
+    }
+
 }
