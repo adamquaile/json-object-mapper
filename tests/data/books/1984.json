@@ -1,3 +1,6 @@
 {
+    "_meta": {
+        "class": "\\AdamQuaile\\JsonObjectMapper\\Tests\\Entity\\Book"
+    },
     "title": "1984"
 }

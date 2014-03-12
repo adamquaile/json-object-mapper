@@ -18,16 +18,22 @@ class EntityManager
 
     public function __construct($location)
     {
-        $this->location = $location;
+        $this->location = realpath($location);
         $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
+    private function getFileContents($id)
+    {
+        return file_get_contents($this->location . DIRECTORY_SEPARATOR . $id . '.json');
+    }
+
+
+
     public function find($id)
     {
-        $filename = $this->location . DIRECTORY_SEPARATOR . $id . '.json';
-
-        return self::fromJsonWithId($id, file_get_contents($filename));
+        return self::fromJsonWithId($id, $this->getFileContents($id));
     }
+
     public function findAll($namespace)
     {
         $finder = new Finder();
@@ -36,7 +42,9 @@ class EntityManager
         $entities = [];
         foreach ($finder as $file) {
             $realPath = $file->getRealPath();
-            $id = str_replace($this->location, '', $this->location);
+            $id = str_replace($this->location, '', $realPath);
+            $id = ltrim($id, '/');
+            $id = preg_replace('/\.json$/', '', $id);
             $entities[] = $this->fromJsonWithId($id, file_get_contents($realPath));
         }
 
@@ -58,7 +66,17 @@ class EntityManager
 
     private function getMetadataForEntity($id)
     {
-        return ['class' => '\AdamQuaile\JsonObjectMapper\Entity'];
+        $dataFromFile = json_decode($this->getFileContents($id), true);
+        if (array_key_exists('_meta', $dataFromFile)) {
+            if (array_key_exists('class', $dataFromFile['_meta'])) {
+                $metaClass = $dataFromFile['_meta']['class'];
+            }
+        }
+        if (!isset($metaClass)) {
+            $metaClass = '\AdamQuaile\JsonObjectMapper\Entity';
+        }
+
+        return ['class' => $metaClass];
     }
 
     public function hydrateObject($className, $data)
