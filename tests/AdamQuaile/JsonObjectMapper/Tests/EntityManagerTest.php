@@ -49,11 +49,17 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1984', $this->accessor->getValue($entity, 'title'));
     }
 
-    public function testReadingSingleReturnsCorrectClass()
+    public function testReadingSingleReturnsCorrectClassFromMetaFile()
     {
         $entity = $this->get1984();
         $this->assertInstanceOf('AdamQuaile\JsonObjectMapper\Tests\Entity\Book', $entity);
     }
+    public function testReadingSingleReturnsCorrectClassFromMetaKey()
+    {
+        $entity = $this->em->find('books/crime-and-punishment');
+        $this->assertInstanceOf('AdamQuaile\JsonObjectMapper\Tests\Entity\OverriddenBook', $entity);
+    }
+
 
     private function getExampleEntity()
     {

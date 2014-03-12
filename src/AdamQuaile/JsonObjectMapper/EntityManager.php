@@ -24,7 +24,7 @@ class EntityManager
 
     private function getFileContents($id)
     {
-        return file_get_contents($this->location . DIRECTORY_SEPARATOR . $id . '.json');
+        return file_get_contents($this->getFilename($id));
     }
 
 
@@ -64,19 +64,53 @@ class EntityManager
 
     }
 
-    private function getMetadataForEntity($id)
+    /**
+     * @param $filename
+     * @return array
+     */
+    private function arrayFromJsonFile($filename)
     {
-        $dataFromFile = json_decode($this->getFileContents($id), true);
-        if (array_key_exists('_meta', $dataFromFile)) {
-            if (array_key_exists('class', $dataFromFile['_meta'])) {
-                $metaClass = $dataFromFile['_meta']['class'];
-            }
-        }
-        if (!isset($metaClass)) {
-            $metaClass = '\AdamQuaile\JsonObjectMapper\Entity';
+        return json_decode(file_get_contents($filename), true);
+    }
+
+    private function getFoldersInHierarchy($id)
+    {
+        $folders = [$this->location];
+        $parts = explode('/', $id);
+
+        for ($i=0;$i<count($parts)-1;$i++) {
+            $folders[] = $folders[$i] . DIRECTORY_SEPARATOR . $parts[$i];
         }
 
-        return ['class' => $metaClass];
+        return $folders;
+    }
+
+    private function getMetadataForEntity($id)
+    {
+
+        $currentMetaData = [];
+
+        foreach ($this->getFoldersInHierarchy($id) as $folder) {
+            $metaFile = $folder . DIRECTORY_SEPARATOR . '_meta.json';
+
+            if (file_exists($metaFile)) {
+                $currentMetaData = array_merge_recursive(
+                    $currentMetaData,
+                    $this->arrayFromJsonFile($metaFile)
+                );
+            }
+        }
+
+        $dataFromFile = $this->arrayFromJsonFile($this->getFilename($id));
+
+        if (array_key_exists('_meta', $dataFromFile)) {
+            $currentMetaData = array_replace_recursive($currentMetaData, $dataFromFile['_meta']);
+        }
+        if (!isset($currentMetaData['class'])) {
+            $currentMetaData['class'] = '\AdamQuaile\JsonObjectMapper\Entity';
+        }
+
+        return $currentMetaData;
     }
 
     public function hydrateObject($className, $data)
@@ -95,6 +129,15 @@ class EntityManager
         return $object;
 
 
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    private function getFilename($id)
+    {
+        return $this->location . DIRECTORY_SEPARATOR . $id . '.json';
     }
 
 }

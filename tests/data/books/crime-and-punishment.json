@@ -1,0 +1,6 @@
+{
+    "_meta": {
+        "class": "\\AdamQuaile\\JsonObjectMapper\\Tests\\Entity\\OverriddenBook"
+    },
+    "title": "Crime and Punishment"
+}
