@@ -10,6 +10,8 @@ Small library to read JSON files from a directory and turn them into PHP objects
 
 ## Usage
 
+**Full documentation [here](docs)**
+
     <?php
 
     require __DIR__.'/vendor/autoload.php';
@@ -17,9 +19,19 @@ Small library to read JSON files from a directory and turn them into PHP objects
     $manager = new \AdamQuaile\JsonObjectMapper\EntityManager('/path/to/storage');
 
     // Either
-    $manager->find('object-id');
+    $book = $manager->find('books/1984');
+    $book->isbn;
+    $book->getTitle(); // etc..
 
     // or
 
-    $manager->findAll('sub-folder');
+    $books = $manager->findAll('sub-folder');
+    $books[0]->isbn
+    $books[0]->getTitle() // etc
+
+## Main Features
+
+ - Tiny / simple [query API](docs/02-Querying.md)
+ - Can either [map to objects you define](docs/03-Custom_Mappings.md], or use standard `stdObject`
+
 
