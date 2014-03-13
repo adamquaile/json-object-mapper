@@ -32,6 +32,6 @@ Small library to read JSON files from a directory and turn them into PHP objects
 ## Main Features
 
  - Tiny / simple [query API](docs/02-Querying.md)
- - Can either [map to objects you define](docs/04-Custom_Mappings.md], or use standard `stdObject`
+ - Can either [map to objects you define](docs/03-Custom_Mappings.md), or use standard `stdObject`
 
 
