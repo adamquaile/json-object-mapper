@@ -12,4 +12,4 @@ Next you choose a folder to be the root of your *database*. Let's say `/path/to/
 
     $em = new \AdamQuaile\JsonObjectMapper\EntityManager('/path/to/project/data');
 
-From here you can start querying as described in [Querying](02-Querying.md)
+From here you can start [Storing data](03-Storing_Data.md) and querying as described in [Querying](02-Querying.md)
