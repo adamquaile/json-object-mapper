@@ -1,4 +1,4 @@
 {
     "name": "George Orwell",
-    "books": ["@books/1984", "@book/animal-farm"]
+    "books": ["@books/1984", "@books/animal-farm"]
 }

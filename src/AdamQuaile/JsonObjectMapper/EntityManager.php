@@ -10,6 +10,20 @@ class EntityManager
 {
     private $location;
 
+    /**
+     * @var object[]
+     */
+    private $stubObjects = [];
+
+    /**
+     * @var object[]
+     */
+    private $fullObjects = [];
+
+    /**
+     * @var string[]
+     */
+    private $incompleteStubIds = [];
 
     /**
      * @var \Symfony\Component\PropertyAccess\PropertyAccessor
@@ -31,7 +45,52 @@ class EntityManager
 
     public function find($id)
     {
-        return self::fromJsonWithId($id, $this->getFileContents($id));
+        if (!isset($this->fullObjects[$id])) {
+            $stub = $this->_find($id);
+
+            // Go through stubs until empty..
+            while (count($this->stubObjects) > 0) {
+
+                // Get the first
+                $keys = array_keys($this->stubObjects);
+                $stub = $this->stubObjects[$keys[0]];
+
+                $this->replaceAssociationsWithObjects($stub);
+                $this->markComplete($keys[0], $stub);
+            }
+        }
+        return $this->fullObjects[$id];
+    }
+
+    private function replaceAssociationsWithObjects($stub)
+    {
+        foreach ($this->getPropertiesForId($this->accessor->getValue($stub, 'id')) as $property) {
+
+            $parsedValue = $this->parseAssociations($this->accessor->getValue($stub, $property));
+            $this->accessor->setValue($stub, $property, $parsedValue);
+        }
+    }
+    private function getPropertiesForId($id)
+    {
+        return array_keys($this->arrayFromJsonFile($this->getFilename($id)));
+    }
+
+    private function markComplete($id, $object)
+    {
+        unset($this->stubObjects[$id]);
+        $this->fullObjects[$id] = $object;
+    }
+
+    private function _find($id)
+    {
+        if (isset($this->fullObjects[$id])) {
+            return $this->fullObjects[$id];
+        }
+        if (isset($this->stubObjects[$id])) {
+            return $this->stubObjects[$id];
+        }
+
+        return $this->stubObjects[$id] = $this->getStubFromId($id);
     }
 
     public function findAll($namespace)
@@ -45,15 +104,15 @@ class EntityManager
             $id = str_replace($this->location, '', $realPath);
             $id = ltrim($id, '/');
             $id = preg_replace('/\.json$/', '', $id);
-            $entities[] = $this->fromJsonWithId($id, file_get_contents($realPath));
+            $entities[] = $this->find($id);
         }
 
         return $entities;
     }
 
-    public function fromJsonWithId($id, $jsonString)
+    private function getStubFromId($id)
     {
-        $data = json_decode($jsonString, true);
+        $data = $this->arrayFromJsonFile($this->getFilename($id));
         $data['id'] = $id;
 
 
@@ -115,11 +174,13 @@ class EntityManager
 
     public function hydrateObject($className, $data)
     {
+
         $reflectionClass = new \ReflectionClass($className);
         $object = $reflectionClass->newInstanceWithoutConstructor();
 
         foreach ($data as $key => $value) {
             try {
+
                 $this->accessor->setValue($object, $key, $value);
             } catch (NoSuchPropertyException $e) {
                 $object->$key = $value;
@@ -129,6 +190,27 @@ class EntityManager
         return $object;
 
 
+    }
+
+    private function parseAssociations($value)
+    {
+        switch (true) {
+            case is_string($value):
+                $ref = $this->isAssociationRef($value);
+                return $ref ? $this->_find($ref) : $value;
+            case is_array($value):
+                return array_map(array($this, 'parseAssociations'), $value);
+            default:
+                return $value;
+        }
+    }
+
+    private function isAssociationRef($value)
+    {
+        return (mb_strlen($value) > 1) && ('@' === mb_substr($value, 0, 1))
+            ? mb_substr($value, 1)
+            : false
+        ;
     }
 
     /**

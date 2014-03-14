@@ -63,7 +63,7 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
     public function testFirstLevelAssociation()
     {
         $entity = $this->em->find('books/1984');
-        $this->assertEquals('George Orwell', $this->accessor->getValue($entity, 'author[name]', '', true));
+        $this->assertEquals('George Orwell', $this->accessor->getValue($entity, 'author.name', '', true));
     }
 
     public function testArrayOfAssociations()
@@ -71,8 +71,8 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $author = $this->em->find('authors/george-orwell');
 
         $this->assertCount(2, $this->accessor->getValue($author, 'books'));
-        $this->assertEquals('1984',         $this->accessor->getValue($author, 'books[0][title]', false, true));
-        $this->assertEquals('Animal Farm',  $this->accessor->getValue($author, 'books[0][title]', false, true));
+        $this->assertEquals('1984',         $this->accessor->getValue($author, 'books[0].title', false, true));
+        $this->assertEquals('Animal Farm',  $this->accessor->getValue($author, 'books[1].title', false, true));
 
     }
 
