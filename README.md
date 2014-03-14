@@ -25,7 +25,7 @@ Small library to read JSON files from a directory and turn them into PHP objects
 
     // or
 
-    $books = $manager->findAll('sub-folder');
+    $books = $manager->findAll('books');
     $books[0]->isbn
     $books[0]->getTitle() // etc
 
