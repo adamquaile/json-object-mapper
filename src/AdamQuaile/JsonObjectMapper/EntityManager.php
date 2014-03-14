@@ -6,8 +6,20 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+/**
+ * Class to handle searching, retrieving and mapping objects
+ * from JSON files.
+ *
+ * See docs/02-Querying.md for usage
+ *
+ * @author Adam Quaile <adamquaile@gmail.com>
+ */
 class EntityManager
 {
+    /**
+     * Base location for all JSON files
+     * @var string
+     */
     private $location;
 
     /**
