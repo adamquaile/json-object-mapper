@@ -4,9 +4,16 @@ Small library to read JSON files from a directory and turn them into PHP objects
 
 **Not intended as any kind of DBMS, or application writable persistence layer**
 
+## Main Features
+
+ - Tiny / simple [query API](docs/02-Querying.md)
+ - Can either [map to objects you define](docs/03-Custom_Mappings.md), or use standard `stdObject`
+
+
 ## Installation
 
     composer require adamquaile/json-object-mapper
+
 
 ## Usage
 
@@ -28,10 +35,4 @@ Small library to read JSON files from a directory and turn them into PHP objects
     $books = $manager->findAll('books');
     $books[0]->isbn
     $books[0]->getTitle() // etc
-
-## Main Features
-
- - Tiny / simple [query API](docs/02-Querying.md)
- - Can either [map to objects you define](docs/03-Custom_Mappings.md), or use standard `stdObject`
-
 
