@@ -2,6 +2,7 @@
 
 namespace AdamQuaile\JsonObjectMapper;
 
+use AdamQuaile\JsonObjectMapper\Filters\CallbackFilter;
 use AdamQuaile\JsonObjectMapper\Filters\FieldEqualsFilter;
 use AdamQuaile\JsonObjectMapper\Filters\FilterInterface;
 use AdamQuaile\JsonObjectMapper\Filters\PatternMatchesFilter;
@@ -39,6 +40,18 @@ class Query
     public function matches($field, $pattern)
     {
         $this->addFilter(new PatternMatchesFilter($field, $pattern));
+        return $this;
+    }
+
+    /**
+     * Filter entities by a user-defined function
+     *
+     * @param callable $callback
+     * @return $this
+     */
+    public function callback(callable $callback)
+    {
+        $this->addFilter(new CallbackFilter($callback));
         return $this;
     }
 

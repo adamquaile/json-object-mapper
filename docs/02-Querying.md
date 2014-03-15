@@ -31,3 +31,18 @@ As a second argument to `findAll`, you can pass in a `Query` object to filter th
     // All books by people called george
     $books = $em->findAll('books', $em->query()->matches('author.name', '/george/i');
 
+If there's something more clever you'd like to do, you can use a callback:
+
+    $books = $em->findAll('books', $em->query()->callback(function($entity) {
+
+        return (bool) 'some complicated expression here'
+    });
+
+You can also chain multiple expressions together:
+
+    $books = $em->findAll(
+        'books',
+        $em->query()
+            ->equals('title', '1984')
+            ->matches('author.name', '/george/i')
+    );
