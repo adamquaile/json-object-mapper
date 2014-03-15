@@ -10,9 +10,39 @@ To find an object by its ID:
 
     $book = $em->find('books/1984');
 
-To find all objects of a particular type:
+## Finding multiple entities of a type
+
+To find all objects of a particular type (within a particular namespace / directory):
 
     $books = $em->findAll('books');
 
 You will get back your object (or array of objects)
 
+## More complex queries
+
+As a second argument to `findAll`, you can pass in a `Query` object to filter the results. You can get this object from the `EntityManager` itself.
+
+    // All books whose `title` equals `1984`
+    $books = $em->findAll('books', $em->query()->equals('title', '1984'))
+
+    // All books by George Orwell
+    $books = $em->findAll('books', $em->query()->equals('author.name', 'George Orwell');
+
+    // All books by people called george
+    $books = $em->findAll('books', $em->query()->matches('author.name', '/george/i');
+
+If there's something more clever you'd like to do, you can use a callback:
+
+    $books = $em->findAll('books', $em->query()->callback(function($entity) {
+
+        return (bool) 'some complicated expression here'
+    });
+
+You can also chain multiple expressions together:
+
+    $books = $em->findAll(
+        'books',
+        $em->query()
+            ->equals('title', '1984')
+            ->matches('author.name', '/george/i')
+    );

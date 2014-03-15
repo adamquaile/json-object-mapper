@@ -9,7 +9,7 @@ Small library to read JSON files from a directory and turn them into PHP objects
 
 ## Main Features
 
- - Tiny / simple [query API](docs/02-Querying.md)
+ - Small / simple [query API](docs/02-Querying.md)
  - Can either [map to objects you define](docs/03-Custom_Mappings.md), or use standard `stdObject`
 
 ## Installation
@@ -30,11 +30,16 @@ Small library to read JSON files from a directory and turn them into PHP objects
     // Either
     $book = $manager->find('books/1984');
     $book->isbn;
-    $book->getTitle(); // etc..
+    $book->getTitle(); // etc
 
     // or
 
     $books = $manager->findAll('books');
     $books[0]->isbn
+    $books[0]->getTitle() // etc
+
+    // or
+
+    $books = $manager->findAll('books', $manager->query()->matches('author.name', '/george/i'));
     $books[0]->getTitle() // etc
 
