@@ -1,5 +1,6 @@
 {
     "name": "adamquaile/json-object-mapper",
+    "version": "0.1.0",
     "description": "Maps JSON files to PHP objects, intended for simple model separation and manual content authoring",
     "authors": [
         {
