@@ -73,7 +73,7 @@ class EntityManager
     public function findAll($namespace, Query $query = null)
     {
         $finder = new Finder();
-        $finder->files()->in($this->location . '/' . $namespace)->name('*.json');
+        $finder->files()->in($this->location . '/' . $namespace)->name('*.json')->notName('_meta.json');
 
         $entities = [];
         foreach ($finder as $file) {
