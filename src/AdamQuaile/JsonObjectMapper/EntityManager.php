@@ -65,10 +65,12 @@ class EntityManager
     /**
      * Find all objects within a directory / namespace
      *
-     * @param $namespace
+     * @param $namespace    string
+     * @param $query        Query   Optional query to filter items.
+     *                              Call EntityManager::query() to get instance
      * @return array
      */
-    public function findAll($namespace)
+    public function findAll($namespace, Query $query = null)
     {
         $finder = new Finder();
         $finder->files()->in($this->location . '/' . $namespace)->name('*.json');
@@ -81,6 +83,11 @@ class EntityManager
             $id = preg_replace('/\.json$/', '', $id);
             $entities[] = $this->find($id);
         }
+
+        if (null !== $query) {
+            $entities = $query->getFilteredEntities($entities);
+        }
+
 
         return $entities;
     }
@@ -114,6 +121,15 @@ class EntityManager
             }
         }
         return $this->fullObjects[$id];
+    }
+
+    /**
+     * Create and return a new query object, for passing into
+     * the findAll call
+     */
+    public function query()
+    {
+        return new Query();
     }
 
     /**

@@ -76,6 +76,13 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testSimpleOneFieldEquality()
+    {
+        $books = $this->em->findAll('books', $this->em->query()->equals('title', '1984'));
+        $this->assertCount(1, $books);
+        $this->assertEquals('1984', $this->accessor->getValue($books[0], 'title'));
+    }
+
 
     private function getExampleEntity()
     {
