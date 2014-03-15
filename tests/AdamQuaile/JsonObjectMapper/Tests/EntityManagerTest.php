@@ -82,8 +82,6 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $books = $this->em->findAll('books', $this->em->query()->equals('title', '1984'));
         $this->assertCount(1, $books);
 
-        // Dumping as error only appears on travis
-        var_dump($books);
         $this->assertEquals('1984', $this->accessor->getValue($books[0], 'title'));
     }
     public function testSimpleCallbackSearch()

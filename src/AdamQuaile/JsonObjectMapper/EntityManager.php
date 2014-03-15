@@ -88,6 +88,8 @@ class EntityManager
             $entities = $query->getFilteredEntities($entities);
         }
 
+        // Sometimes array keys can be out of order, i.e. no 0
+        $entities = array_values($entities);
 
         return $entities;
     }
