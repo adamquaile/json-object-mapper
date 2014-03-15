@@ -4,11 +4,12 @@ Small library to read JSON files from a directory and turn them into PHP objects
 
 **Not intended as any kind of DBMS, or application writable persistence layer**
 
+**Build status on latest master:** [![Build Status](https://travis-ci.org/adamquaile/json-object-mapper.png?branch=master)](https://travis-ci.org/adamquaile/json-object-mapper)
+
 ## Main Features
 
  - Tiny / simple [query API](docs/02-Querying.md)
  - Can either [map to objects you define](docs/03-Custom_Mappings.md), or use standard `stdObject`
-
 
 ## Installation
 
