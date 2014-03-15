@@ -1,10 +1,11 @@
 # JSON Object Mapper
 
+[![Build Status](https://travis-ci.org/adamquaile/json-object-mapper.png?branch=master)](https://travis-ci.org/adamquaile/json-object-mapper)
+
 Small library to read JSON files from a directory and turn them into PHP objects. Designed for simple content authoring and model separation by developers without the need for a whole DBMS.
 
 **Not intended as any kind of DBMS, or application writable persistence layer**
 
-**Build status on latest master:** [![Build Status](https://travis-ci.org/adamquaile/json-object-mapper.png?branch=master)](https://travis-ci.org/adamquaile/json-object-mapper)
 
 ## Main Features
 
