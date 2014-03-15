@@ -93,6 +93,12 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1984', $this->accessor->getValue($books[0], 'title'));
     }
 
+    public function testMetaFileNotReturned()
+    {
+        $books = $this->em->findAll('books', $this->em->query()->equals('id', 'books/_meta'));
+        $this->assertCount(0, $books);
+    }
+
 
     private function getExampleEntity()
     {
