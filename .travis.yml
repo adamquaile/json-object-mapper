@@ -1,11 +1,11 @@
 language: php
-  php:
-    - 5.4
-    - 5.5
-    - hhvm
+php:
+  - 5.4
+  - 5.5
+  - hhvm
 
-  before_script:
-    - composer install --dev
+before_script:
+  - composer install --dev
 
-  script:
-    - ./phpunit.php 
+script:
+  - ./phpunit.php
