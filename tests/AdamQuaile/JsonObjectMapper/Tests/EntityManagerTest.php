@@ -99,6 +99,53 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $books);
     }
 
+    public function testCanFindItemWithoutOrderPrefix()
+    {
+        $item = $this->em->find('ordered/first-item');
+        $this->assertTrue(is_object($item));
+    }
+
+    /**
+     * @depends testCanFindItemWithoutOrderPrefix
+     */
+    public function testItemWithNumericPrefixExcludesPrefix()
+    {
+        $item = $this->em->find('ordered/first-item');
+        $this->assertEquals('ordered/first-item', $this->accessor->getValue($item, 'id'));
+    }
+
+    public function testItemsExcludePrefix()
+    {
+        $items = $this->em->findAll('ordered');
+        $this->assertCount(4, $items);
+
+        $ids = [
+            'ordered/first-item',
+            'ordered/second-item',
+            'ordered/third-item',
+            'ordered/fourth-item'
+        ];
+
+        $this->assertTrue(in_array($this->accessor->getValue($items[0], 'id'), $ids));
+        $this->assertTrue(in_array($this->accessor->getValue($items[1], 'id'), $ids));
+        $this->assertTrue(in_array($this->accessor->getValue($items[2], 'id'), $ids));
+        $this->assertTrue(in_array($this->accessor->getValue($items[3], 'id'), $ids));
+    }
+
+    /**
+     * @depends testItemsExcludePrefix
+     */
+    public function testUsesNaturalOrdering()
+    {
+        $items = $this->em->findAll('ordered');
+        $this->assertCount(4, $items);
+        $this->assertEquals('ordered/first-item',   $this->accessor->getValue($items[0], 'id'));
+        $this->assertEquals('ordered/second-item',  $this->accessor->getValue($items[1], 'id'));
+        $this->assertEquals('ordered/third-item',   $this->accessor->getValue($items[2], 'id'));
+        $this->assertEquals('ordered/fourth-item',  $this->accessor->getValue($items[3], 'id'));
+
+    }
+
 
     private function getExampleEntity()
     {
