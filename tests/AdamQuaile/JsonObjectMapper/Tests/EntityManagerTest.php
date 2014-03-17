@@ -99,6 +99,17 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $books);
     }
 
+    public function testNumericItemIdIsPreservedUsingFind()
+    {
+        $book = $this->em->find('books/1984');
+        $this->assertEquals('books/1984', $this->accessor->getValue($book, 'id'));
+    }
+    public function testNumericItemIdIsPreservedUsingFindAll()
+    {
+        $books = $this->em->findAll('books', $this->em->query()->equals('title', '1984'));
+        $this->assertEquals('books/1984', $this->accessor->getValue($books[0], 'id'));
+    }
+
     public function testCanFindItemWithoutOrderPrefix()
     {
         $item = $this->em->find('ordered/first-item');
