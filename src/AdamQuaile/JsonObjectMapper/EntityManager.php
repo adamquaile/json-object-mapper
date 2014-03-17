@@ -125,7 +125,7 @@ class EntityManager
 
         list($base, $suffix) = $this->splitId($id);
 
-        $suffix = preg_replace('/^[0-9]*./', '', $suffix);
+        $suffix = preg_replace('/^([0-9]+[^0-9]{1})?/', '', $suffix);
 
         return $base . '/' . $suffix;
     }
