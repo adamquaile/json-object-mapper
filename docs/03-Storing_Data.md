@@ -23,3 +23,8 @@ In each of these files, place a JSON dictionary containing data about that objec
 
 You will then be able to [query this data](02-Querying.md)
 
+## Sorting
+
+By default, items will be sorted naturally using [`strnatcasecmp`](http://us3.php.net/manual/en/function.strnatcasecmp.php) on their filename.
+You may wish to add `01-`, `02-` to your files to order them. This will not affect the ID returned, or the ID required to search.
+

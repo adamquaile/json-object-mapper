@@ -76,22 +76,58 @@ class EntityManager
         $finder->files()->in($this->location . '/' . $namespace)->name('*.json')->notName('_meta.json');
 
         $entities = [];
+        $idToFileMapping = [];
         foreach ($finder as $file) {
+            /**
+             * @var \SplFileInfo $file
+             */
             $realPath = $file->getRealPath();
+
             $id = str_replace($this->location, '', $realPath);
-            $id = ltrim($id, '/');
-            $id = preg_replace('/\.json$/', '', $id);
+            $id = $this->normaliseIdFromRelativeFilename($id);
+
+            $idToFileMapping[$id] = $file->getFilename();
+
             $entities[] = $this->find($id);
         }
 
+        // Filter the items
         if (null !== $query) {
             $entities = $query->getFilteredEntities($entities);
         }
+
+        // Sort the items
+        // TODO: Allow user-defined sorting
+        $accessor = $this->accessor;
+        usort($entities, function($obj1, $obj2) use ($idToFileMapping, $accessor) {
+            return strnatcasecmp(
+                $idToFileMapping[$this->accessor->getValue($obj1, 'id')],
+                $idToFileMapping[$this->accessor->getValue($obj2, 'id')]
+            );
+        });
 
         // Sometimes array keys can be out of order, i.e. no 0
         $entities = array_values($entities);
 
         return $entities;
+    }
+
+    /**
+     * Take a relative filename like level1/01-item.json and return
+     * the normalised id, e.g. level1/item
+     * @param $id
+     * @return mixed|string
+     */
+    private function normaliseIdFromRelativeFilename($id)
+    {
+        $id = ltrim($id, '/');
+        $id = preg_replace('/\.json$/', '', $id);
+
+        list($base, $suffix) = $this->splitId($id);
+
+        $suffix = preg_replace('/^([0-9]+[^0-9]{1})?/', '', $suffix);
+
+        return $base . '/' . $suffix;
     }
 
     /**
@@ -322,10 +358,39 @@ class EntityManager
      *
      * @param $id
      * @return string
+     * @throws \RuntimeException
      */
     private function getFilename($id)
     {
-        return $this->location . DIRECTORY_SEPARATOR . $id . '.json';
+        list($base, $suffix) = $this->splitId($id);
+
+        $directory = $this->location . DIRECTORY_SEPARATOR . $base;
+
+        $finder = new Finder();
+        $iterator = $finder->files()->in($directory)->name('/[0-9]*'.preg_quote($suffix).'\.json$/');
+
+        // An iterator is returned, we'll take the first!
+        foreach ($iterator as $f) {
+            /**
+             * @var \SplFileInfo $f
+             */
+            return $f->getPathname();
+        }
+
+        throw new \RuntimeException('Could not locate file by ID');
+    }
+
+    /**
+     * Split an ID into its base and last part. Useful with list()
+     *
+     * @param $id
+     * @return array
+     */
+    private function splitId($id)
+    {
+        $parts = explode('/', $id);
+        $last = array_pop($parts);
+        return [implode('/', $parts), $last];
     }
 
 }
